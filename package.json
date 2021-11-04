@@ -24,9 +24,11 @@
   },
   "homepage": "https://github.com/RocTanweer/authentication-system#readme",
   "devDependencies": {
+    "dotenv": "^10.0.0",
     "nodemon": "^2.0.14"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^6.0.12"
   }
 }
