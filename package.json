@@ -1,0 +1,32 @@
+{
+  "name": "authentication-system",
+  "version": "1.0.0",
+  "description": "The is a reusable code for a authentication system",
+  "main": "index.server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.server.js",
+    "dev": "nodemon index.server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RocTanweer/authentication-system.git"
+  },
+  "keywords": [
+    "authentication",
+    "authorization",
+    "login system"
+  ],
+  "author": "Roc Tanweer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RocTanweer/authentication-system/issues"
+  },
+  "homepage": "https://github.com/RocTanweer/authentication-system#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
