@@ -11,6 +11,7 @@ connectDB();
 // body parser
 app.use(express.json());
 
+// router middlewares
 app.use("/", UserRoutes);
 
 // setting port number dynamically
