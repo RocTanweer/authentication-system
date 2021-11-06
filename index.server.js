@@ -12,7 +12,7 @@ connectDB();
 app.use(express.json());
 
 // router middlewares
-app.use("/", UserRoutes);
+app.use("/user", UserRoutes);
 
 // setting port number dynamically
 const PORT = process.env.PORT || 4000;
