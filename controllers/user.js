@@ -83,9 +83,20 @@ export const patchUserProfile = async (req, res) => {
       throw new Error("Invalid ObjectId");
     }
     // updating specified fields of user in the DB
+    let updateQuery = {};
+
+    Object.entries(req.body.toBeUpdated).forEach(([key, value]) => {
+      if (key === "password") {
+        const hashedPassword = bcrypt.hashSync(value, 10);
+        updateQuery[key] = hashedPassword;
+      } else {
+        updateQuery[key] = value;
+      }
+    });
+    console.log(updateQuery);
     const updatedUser = await User.updateOne(
       { _id: userId },
-      { $set: { ...req.body.toBeUpdated } }
+      { $set: updateQuery }
     );
     res.status(201).json({ message: "User updated!", updatedUser });
   } catch (error) {
