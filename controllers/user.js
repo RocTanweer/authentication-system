@@ -78,6 +78,7 @@ export const userLogout = async (req, res) => {
       (token) => token !== refreshToken
     );
     await userFromDB.save();
+    res.status(400).json({ message: "You are logged out!" });
   } catch (error) {
     res.json(error.message);
   }
