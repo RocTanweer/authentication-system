@@ -1,6 +1,7 @@
 import express from "express";
 import { connectDB } from "./config/database.js";
 import UserRoutes from "./routes/user.js";
+import tokenRoutes from "./routes/refresh-token.js";
 
 // initializing express app
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // router middlewares
 app.use("/user", UserRoutes);
+app.use("/refresh-token", tokenRoutes);
 
 // setting port number dynamically
 const PORT = process.env.PORT || 4000;
