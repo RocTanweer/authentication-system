@@ -1,5 +1,9 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/functions.js";
 
 export const userRegistration = async (req, res) => {
   try {
@@ -43,9 +47,37 @@ export const userLogin = async (req, res) => {
       throw new Error("Incorrect password");
     }
 
-    res
-      .status(200)
-      .json({ message: "You are logged in", userId: userFromDB._id });
+    const accessToken = generateAccessToken(userFromDB._id);
+    const refreshToken = generateRefreshToken(userFromDB._id);
+
+    // saving refresh token in DB for each user.refreshToken field
+    userFromDB.refreshTokens.push(refreshToken);
+    await userFromDB.save();
+
+    res.status(200).set("x-access-token", accessToken).json({
+      message: "You are logged in",
+      userId: userFromDB._id,
+      refreshToken,
+    });
+  } catch (error) {
+    res.json(error.message);
+  }
+};
+
+export const userLogout = async (req, res) => {
+  try {
+    // getting the required data from client
+    const { refreshToken, id } = req.body;
+    if (!(refreshToken && id)) {
+      res.status(400);
+      throw new Error("Either id or refresh token is not present");
+    }
+    // finding the User using that id
+    const userFromDB = await User.findOne({ _id: id });
+    userFromDB.refreshTokens = userFromDB.refreshTokens.filter(
+      (token) => token !== refreshToken
+    );
+    await userFromDB.save();
   } catch (error) {
     res.json(error.message);
   }
