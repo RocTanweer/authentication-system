@@ -12,7 +12,8 @@ export const userRegistration = async (req, res) => {
     const checkUser = await User.findOne({ email });
     if (checkUser) {
       res.status(403);
-      throw new Error("Forbidden, User already exists");
+      // throw new Error("Forbidden, User already exists");
+      return res.json({ message: "Forbidden, User already exists" });
     }
     // hashing the plaintext password
     const hashed_password = await bcrypt.hash(password, 10);
