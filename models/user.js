@@ -2,16 +2,13 @@ import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
   {
+    profilepic: String,
     name: {
       type: String,
       required: true,
     },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-    },
+    bio: String,
+    phoneNumber: Number,
     email: {
       type: String,
       required: true,

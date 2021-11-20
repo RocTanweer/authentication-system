@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./config/database.js";
 import UserRoutes from "./routes/user.js";
 import tokenRoutes from "./routes/refresh-token.js";
@@ -11,6 +12,13 @@ connectDB();
 
 // body parser
 app.use(express.json());
+
+// enabling cors
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // router middlewares
 app.use("/user", UserRoutes);
