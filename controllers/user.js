@@ -7,24 +7,23 @@ import {
 
 export const userRegistration = async (req, res) => {
   try {
-    const { name, username, email, password } = req.body;
+    const { name, email, password } = req.body;
     // checking if the same user exist in the database
     const checkUser = await User.findOne({ email });
     if (checkUser) {
-      res.status(400);
-      throw new Error("User already exists");
+      res.status(403);
+      throw new Error("Forbidden, User already exists");
     }
     // hashing the plaintext password
     const hashed_password = await bcrypt.hash(password, 10);
     // creating the new User instance and saving it to DB
     const createUser = new User({
       name,
-      username,
       email,
       password: hashed_password,
     });
     await createUser.save();
-    res.status(201).json({ message: "You are registered" });
+    res.status(201).json({ message: "Created, You are registered" });
   } catch (error) {
     // if(res.status)
     res.json(error.message);
@@ -33,18 +32,18 @@ export const userRegistration = async (req, res) => {
 
 export const userLogin = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     // checking if user with that username exist
-    const userFromDB = await User.findOne({ username });
+    const userFromDB = await User.findOne({ email });
     if (!userFromDB) {
-      res.status(400);
-      throw new Error("No User exists with that username");
+      res.status(401);
+      throw new Error("Unauthorized, No User exists with that email");
     }
     // comparing the password with password in db
     const passwordMatches = await bcrypt.compare(password, userFromDB.password);
     if (!passwordMatches) {
-      res.status(400);
-      throw new Error("Incorrect password");
+      res.status(401);
+      throw new Error("Unauthorized, Incorrect password");
     }
 
     const accessToken = generateAccessToken(userFromDB._id);
@@ -55,7 +54,7 @@ export const userLogin = async (req, res) => {
     await userFromDB.save();
 
     res.status(200).set("x-access-token", accessToken).json({
-      message: "You are logged in",
+      message: "Success, You are logged in",
       userId: userFromDB._id,
       refreshToken,
     });
@@ -69,8 +68,10 @@ export const userLogout = async (req, res) => {
     // getting the required data from client
     const { refreshToken, id } = req.body;
     if (!(refreshToken && id)) {
-      res.status(400);
-      throw new Error("Either id or refresh token is not present");
+      res.status(401);
+      throw new Error(
+        "Unauthorized, Either id or refresh token is not present"
+      );
     }
     // finding the User using that id
     const userFromDB = await User.findOne({ _id: id });
@@ -78,7 +79,7 @@ export const userLogout = async (req, res) => {
       (token) => token !== refreshToken
     );
     await userFromDB.save();
-    res.status(400).json({ message: "You are logged out!" });
+    res.status(200).json({ message: "Success, You are logged out!" });
   } catch (error) {
     res.json(error.message);
   }
@@ -89,15 +90,15 @@ export const getUserProfile = async (req, res) => {
     const userId = req.params.userId;
     // checking if userId is a valid ObjectId
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
-      res.status(400);
-      throw new Error("Invalid ObjectId");
+      res.status(401);
+      throw new Error("Unauthorized, Invalid ObjectId");
     }
 
     // we will find if there is a user in our DB
     const userExist = await User.findOne({ _id: userId });
     if (!userExist) {
-      res.status(400);
-      throw new Error("No user found for that `userId`");
+      res.status(401);
+      throw new Error("Unauthorized, No user found for that `userId");
     }
 
     // sending user info to the client
@@ -112,8 +113,8 @@ export const patchUserProfile = async (req, res) => {
     const userId = req.params.userId;
     // checking if userId is a valid ObjectId
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
-      res.status(400);
-      throw new Error("Invalid ObjectId");
+      res.status(401);
+      throw new Error("Unauthorized, Invalid ObjectId");
     }
     // updating specified fields of user in the DB
     let updateQuery = {};
@@ -131,12 +132,12 @@ export const patchUserProfile = async (req, res) => {
       { _id: userId },
       { $set: updateQuery }
     );
-    res.status(201).json({ message: "User updated!", updatedUser });
+    res.status(200).json({ message: "Success, User updated!", updatedUser });
   } catch (error) {
     res.json(error);
   }
 };
 
 export const handleEveryrouteElse = (req, res) => {
-  res.status(404).json({ message: "page not found" });
+  res.status(404).json({ message: "Not Found, page not found" });
 };
