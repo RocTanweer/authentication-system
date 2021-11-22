@@ -54,10 +54,11 @@ export const userLogin = async (req, res) => {
     userFromDB.refreshTokens.push(refreshToken);
     await userFromDB.save();
 
-    res.status(200).set("x-access-token", accessToken).json({
+    res.status(200).json({
       message: "Success, You are logged in",
       userId: userFromDB._id,
       refreshToken,
+      accessToken,
     });
   } catch (error) {
     res.json(error.message);
