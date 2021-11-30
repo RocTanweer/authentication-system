@@ -2,13 +2,22 @@ import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
   {
-    profilepic: String,
+    photo: {
+      type: String,
+      default: "",
+    },
     name: {
       type: String,
       required: true,
     },
-    bio: String,
-    phoneNumber: Number,
+    bio: {
+      type: String,
+      default: "",
+    },
+    phone: {
+      type: Number,
+      default: 0,
+    },
     email: {
       type: String,
       required: true,
